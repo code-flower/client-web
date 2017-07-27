@@ -17,7 +17,7 @@ angular.module('CodeFlower')
     },
 
     getSamples: function() {
-      var url = origin + appConfig.endpoints.samples;
+      var url = appConfig.endpoints.samples;
       return $http.get(url)
       .then(function(res) {
         return res.data;
