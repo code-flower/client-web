@@ -27,7 +27,7 @@ const appConfig = require('./shared/appConfig');
 ///////////////// CONSTANTS //////////////////
 
 // the directory where the front-end files are served
-const DIST = './client/dist';
+const DIST = './dist';
 
 // dev or prod
 const ENV = argv.env || process.env.NODE_ENV || 'development';
@@ -35,7 +35,7 @@ const ENV = argv.env || process.env.NODE_ENV || 'development';
 ///////////////// BUNDLER ////////////////////
 
 gulp.task('bundle', function() {
-  return browserify('./client/js/require.js')
+  return browserify('./src/js/require.js')
     .transform(bulkify)
     .transform(babelify, { presets: ['es2015'] })
     .transform(envify({ NODE_ENV: ENV }))
@@ -52,7 +52,7 @@ gulp.task('bundle', function() {
 ////////////////// SASS //////////////////////
 
 gulp.task('sass', function() {
-  return gulp.src('./client/scss/index.scss')
+  return gulp.src('./src/scss/index.scss')
     .pipe(sass({
       outputStyle: ENV === 'production' ? 'compressed' : 'nested'
     })
@@ -67,7 +67,7 @@ gulp.task('sass', function() {
 ////////////////// TEMPLATES /////////////////
  
 gulp.task('templates', function() {
-  return gulp.src('./client/js/app/partials/**/*.html')
+  return gulp.src('./src/js/app/partials/**/*.html')
     .pipe(ngTemplates({
       filename: 'templates.js',
       module: 'CodeFlower',
@@ -83,7 +83,7 @@ gulp.task('templates', function() {
 ///////////////// COPY TASKS /////////////////
 
 gulp.task('copy:index', function() {
-  return gulp.src('./client/index.html')
+  return gulp.src('./src/index.html')
     .pipe(removeCode({ 
       removeScript: ENV === 'production'
     }))
@@ -92,15 +92,15 @@ gulp.task('copy:index', function() {
 });
 
 gulp.task('copy:assets', function() {
-  return gulp.src('./client/assets/**')
+  return gulp.src('./src/assets/**')
     .pipe(gulp.dest(DIST));  
 });
 
 gulp.task('copy:d3', function() {
   return gulp.src([
-    './client/js/vendor/d3.js',
-    './client/js/vendor/d3.geom.js',
-    './client/js/vendor/d3.layout.js'
+    './src/js/vendor/d3.js',
+    './src/js/vendor/d3.geom.js',
+    './src/js/vendor/d3.layout.js'
   ])
     .pipe(concat('d3.bundle.js'))
     .pipe(ENV === 'production' ? uglify() : gutil.noop())
@@ -117,19 +117,19 @@ gulp.task('clean:dist', function() {
 ////////////////// DEV TASKS //////////////////
 
 gulp.task('watch:js', function() {
-  gulp.watch(['./client/js/**/*.js'], ['bundle']);
+  gulp.watch(['./src/js/**/*.js'], ['bundle']);
 });
 
 gulp.task('watch:sass', function() {
-  gulp.watch(['./client/scss/**/*.scss'], ['sass']);
+  gulp.watch(['./src/scss/**/*.scss'], ['sass']);
 });
 
 gulp.task('watch:partials', function() {
-  gulp.watch(['./client/js/app/partials/**/*.html'], ['templates']);
+  gulp.watch(['./src/js/app/partials/**/*.html'], ['templates']);
 });
 
 gulp.task('watch:index', function() {
-  gulp.watch(['./client/index.html'], ['copy:index']);
+  gulp.watch(['./src/index.html'], ['copy:index']);
 });
 
 gulp.task('browser-sync', function() {
