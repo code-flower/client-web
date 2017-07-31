@@ -13,7 +13,6 @@ const sass = require('gulp-sass');
 const autoprefixer = require('gulp-autoprefixer');
 const ngTemplates = require('gulp-ng-templates');
 const concat = require('gulp-concat');
-const removeCode = require('gulp-remove-code');
 const clean = require('gulp-clean');
 const runSequence = require('run-sequence');
 const zip = require('gulp-zip');
@@ -86,9 +85,6 @@ gulp.task('templates', function() {
 
 gulp.task('copy:index', function() {
   return gulp.src('./src/index.html')
-    .pipe(removeCode({ 
-      removeScript: ENV === 'production'
-    }))
     .pipe(gulp.dest(DIST))
     .pipe(browserSync.stream());
 });
