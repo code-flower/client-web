@@ -1,8 +1,5 @@
 node_modules/
 dist/
-repos/
-logs/
 private/
-server/HTTP/cert/
 
 sftp-config.json
