@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('CodeFlower')
-.factory('WS', function($rootScope, appConfig, state) {
+.factory('WS', function(ORIGINS, MESSAGE_TYPES, $rootScope, state) {
 
   // initiates a clone on the backend,
   // monitors progress over a websockets connection,
@@ -12,11 +12,11 @@ angular.module('CodeFlower')
 
     cloneRepo: function(data, subscribers) {
       
-      var socket = new WebSocket(`${appConfig.protocol.WS}://${appConfig.hostName}:${appConfig.ports.WS}`);
+      var socket = new WebSocket(ORIGINS.ws);
 
       socket.onopen = function(e) {
         socket.send(JSON.stringify({
-          type: appConfig.messageTypes.clone,
+          type: MESSAGE_TYPES.clone,
           repo: data
         }));  
       };
@@ -26,14 +26,14 @@ angular.module('CodeFlower')
         // halt if the clone has been aborted
         if (!state.cloning) {
           socket.send(JSON.stringify({
-            type: appConfig.messageTypes.abort
+            type: MESSAGE_TYPES.abort
           }));
           return;
         }
 
         // otherwise handle the event
         var data = JSON.parse(event.data);
-        var types = appConfig.messageTypes;
+        var types = MESSAGE_TYPES;
 
         switch(data.type) {
           case types.text:

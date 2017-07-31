@@ -2,12 +2,12 @@
 'use strict';
 
 angular.module('CodeFlower')
-.directive('flowerControl', function(appConfig, state, colorSchemes) {
+.directive('flowerControl', function(PARTIALS_DIR, MAX_NODES, state, colorSchemes) {
 
   return {
     restrict: 'E',
     replace: true,
-    templateUrl: appConfig.paths.partials + 'flower-control.html',
+    templateUrl: PARTIALS_DIR + 'flower-control.html',
     scope: {},
     link: link
   };
@@ -22,7 +22,7 @@ angular.module('CodeFlower')
     scope.selectedFolder = {};
     scope.selectedColorScheme = '';
     scope.colorSchemes = Object.keys(colorSchemes);
-    scope.maxNodes = appConfig.maxNodes;
+    scope.maxNodes = MAX_NODES;
 
     //// EVENT EMITTERS ////
 

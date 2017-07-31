@@ -2,12 +2,12 @@
 'use strict';
 
 angular.module('CodeFlower')
-.directive('ignoredFiles', function(appConfig, state, dataService, $sce) {
+.directive('ignoredFiles', function(PARTIALS_DIR, state, dataService, $sce) {
 
   return {
     restrict: 'E',
     replace: true,
-    templateUrl: appConfig.paths.partials + 'modals/ignored-files.html',
+    templateUrl: PARTIALS_DIR + 'modals/ignored-files.html',
     scope: {},
     link: link
   };

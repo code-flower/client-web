@@ -2,12 +2,12 @@
 'use strict';
 
 angular.module('CodeFlower')
-.controller('mainModal', function($scope, appConfig) {
+.controller('mainModal', function(PARTIALS_DIR, $scope) {
 
   //// SCOPE VARS ////
 
   $scope.activeTab = 'about';
-  $scope.aboutTabPartial = appConfig.paths.partials + 'modals/about-section.html';
+  $scope.aboutTabPartial = PARTIALS_DIR + 'modals/about-section.html';
 
   //// SCOPE FUNCTIONS ////
 

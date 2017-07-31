@@ -22,7 +22,7 @@ const gutil = require('gulp-util');
 const ngAnnotate = require('gulp-ng-annotate');
 const bulkify = require('bulkify');
 
-const appConfig = require('./shared/appConfig');
+const config = require('./config');
 
 ///////////////// CONSTANTS //////////////////
 
@@ -72,7 +72,7 @@ gulp.task('templates', function() {
       filename: 'templates.js',
       module: 'CodeFlower',
       path: function(path, base) {
-        return appConfig.paths.partials + path.replace(base, '');
+        return config.paths.partials + path.replace(base, '');
       },
       standalone: false
     }))

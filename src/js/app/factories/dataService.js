@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('CodeFlower')
-.factory('dataService', function(appConfig, dbAccess, WS, HTTP) {
+.factory('dataService', function(dbAccess, WS, HTTP) {
 
   //// PRIVATE ////
 

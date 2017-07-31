@@ -2,14 +2,13 @@
 'use strict';
 
 angular.module('CodeFlower')
-.factory('HTTP', function ($http, appConfig) {
-
-  var origin = `${appConfig.protocol.HTTP}://${appConfig.hostName}:${appConfig.ports.HTTP}`;
+.factory('HTTP', function (ORIGINS, ENDPOINTS, $http) {
 
   return {
 
     getRepo: function(repoName) {
-      var url = origin + `${appConfig.endpoints.harvest}?repo=${encodeURIComponent(repoName)}`;
+      var url = ORIGINS.harvest + ENDPOINTS.harvest + 
+                `?repo=${encodeURIComponent(repoName)}`;
       return $http.get(url)
       .then(function(res) {
         return res.data;
@@ -17,7 +16,7 @@ angular.module('CodeFlower')
     },
 
     getSamples: function() {
-      var url = appConfig.endpoints.samples;
+      var url = ORIGINS.samples + ENDPOINTS.samples;
       return $http.get(url)
       .then(function(res) {
         return res.data;

@@ -2,12 +2,12 @@
 'use strict';
 
 angular.module('CodeFlower')
-.directive('appContainer', function(appConfig, state, $uibModal) {
+.directive('appContainer', function(PARTIALS_DIR, state, $uibModal) {
 
   return {
     restrict: 'E',
     replace: true,
-    templateUrl: appConfig.paths.partials + 'app-container.html',
+    templateUrl: PARTIALS_DIR + 'app-container.html',
     controller: 'dispatcher',
     link: link
   };
@@ -18,7 +18,7 @@ angular.module('CodeFlower')
     scope.openModal = function() {
       $uibModal.open({
         controller: 'mainModal',
-        templateUrl: appConfig.paths.partials + 'modals/main-modal.html',
+        templateUrl: PARTIALS_DIR + 'modals/main-modal.html',
         animation: false
       });
     };

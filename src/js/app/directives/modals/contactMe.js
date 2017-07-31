@@ -2,12 +2,12 @@
 'use strict';
 
 angular.module('CodeFlower')
-.directive('contactMe', function($http, appConfig) {
+.directive('contactMe', function(PARTIALS_DIR, ORIGINS, ENDPOINTS, $http) {
 
   return {
     restrict: 'E',
     replace: true,
-    templateUrl: appConfig.paths.partials + 'modals/contact-me.html',
+    templateUrl: PARTIALS_DIR + 'modals/contact-me.html',
     scope: {
       closeModal: '='
     },
@@ -29,7 +29,7 @@ angular.module('CodeFlower')
       scope.emailDisabled = true;
       $http({
         method: 'GET',
-        url: appConfig.endpoints.email + '?message=' + encodeURIComponent(text)
+        url: ORIGINS.email + ENDPOINTS.email + '?message=' + encodeURIComponent(text)
       })
       .then(function(res) {
         scope.emailStatus = 'Message sent. Thanks!';

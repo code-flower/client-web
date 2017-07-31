@@ -2,12 +2,12 @@
 'use strict';
 
 angular.module('CodeFlower')
-.factory('dbAccess', function($q, appConfig) {
+.factory('dbAccess', function(DATABASE, $q) {
 
   //// CONSTANTS ////
 
-  var repoDB = appConfig.database.dbName;
-  var repoTable = appConfig.database.tableName;
+  var repoDB = DATABASE.dbName;
+  var repoTable = DATABASE.tableName;
 
   //// PRIVATE ////
 

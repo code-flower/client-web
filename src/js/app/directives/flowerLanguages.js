@@ -2,12 +2,12 @@
 'use strict';
 
 angular.module('CodeFlower')
-.directive('flowerLanguages', function(appConfig, state, colorSchemes, createCSSSelector) {
+.directive('flowerLanguages', function(PARTIALS_DIR, state, colorSchemes, createCSSSelector) {
 
   return {
     restrict: 'E',
     replace: true,
-    templateUrl: appConfig.paths.partials + 'flower-languages.html',
+    templateUrl: PARTIALS_DIR + 'flower-languages.html',
     scope: {},
     link: link
   };

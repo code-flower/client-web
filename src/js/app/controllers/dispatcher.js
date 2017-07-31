@@ -2,12 +2,12 @@
 'use strict';
 
 angular.module('CodeFlower')
-.controller('dispatcher', function($scope, $timeout, $uibModal, $q,
-                                   appConfig, state, dataService, flowerUtils) {
+.controller('dispatcher', function(PARTIALS_DIR, MAX_NODES, $scope, $timeout, $uibModal, $q,
+                                   state, dataService, flowerUtils) {
 
   //// MODAL FUNCTIONS ////
 
-  // see if the first path has more than the appConfig.maxNodes.
+  // see if the first path has more than MAX_NODES.
   // If so, prompt user to continue or render a subfolder.
   // Return the index of the folder in state.folderPaths that
   // should be rendered.
@@ -15,10 +15,10 @@ angular.module('CodeFlower')
     var deferred = $q.defer();
 
     var numNodes = state.folderPaths[0].totalNodes;
-    if (numNodes > appConfig.maxNodes) {
+    if (numNodes > MAX_NODES) {
       $uibModal.open({
         controller: 'maxNodesModal',
-        templateUrl: appConfig.paths.partials + 'modals/max-nodes-modal.html',
+        templateUrl: PARTIALS_DIR + 'modals/max-nodes-modal.html',
         animation: false,
         keyboard: false,
         size: 'sm',
@@ -33,12 +33,12 @@ angular.module('CodeFlower')
 
         // if we're rendering a subfolder, find the one
         // with the greatest number of nodes that's less
-        // than or equal to appConfig.maxNodes
+        // than or equal to MAX_NODES
         if (!data.renderAll) {
           var curMaxNodes = -1, nodes;
           for (var i = 1; i < state.folderPaths.length; i++) {
             nodes = state.folderPaths[i].totalNodes;
-            if (nodes <= appConfig.maxNodes && nodes > curMaxNodes) {
+            if (nodes <= MAX_NODES && nodes > curMaxNodes) {
               curMaxNodes = nodes;
               curPathIdx = i;
             }
@@ -60,7 +60,7 @@ angular.module('CodeFlower')
     $uibModal.open({
 
       controller: 'credentialsModal',
-      templateUrl: appConfig.paths.partials + 'modals/credentials-modal.html',
+      templateUrl: PARTIALS_DIR + 'modals/credentials-modal.html',
       animation: false,
       size: 'sm',
       resolve: {
