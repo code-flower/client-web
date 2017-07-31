@@ -21,8 +21,10 @@ const uglify = require('gulp-uglify');
 const gutil = require('gulp-util');
 const ngAnnotate = require('gulp-ng-annotate');
 const bulkify = require('bulkify');
+const s3 = require('s3');
 
 const config = require('./config');
+const awsCreds = require('./private/aws-creds');
 
 ///////////////// CONSTANTS //////////////////
 
@@ -114,6 +116,48 @@ gulp.task('clean:dist', function() {
     .pipe(clean());
 });
 
+///////////////////// UPLOAD TO S3 ////////////////////////
+
+gulp.task('upload', function(cb) {
+
+  var client = s3.createClient({
+    s3Options: awsCreds
+  });
+
+  var uploader = client.uploadDir({
+    localDir: DIST,
+    deleteRemoved: true,
+    s3Params: {
+      Bucket: 'codeflower'
+    },
+    getS3Params: function(localFile, stat, callback) {
+      var s3Params = stat.path === 'index.html' ? 
+                     { CacheControl: 'max-age=0' } :
+                     { CacheControl: 'max-age=604800' }
+      callback(null, s3Params);
+    }
+  });
+
+  uploader.on('error', function(err) {
+    console.error("unable to sync:", err.stack);
+    process.exit(1); 
+  });
+
+  var lastProgress = 0, curProgress;
+  uploader.on('progress', function() {
+    curProgress = 100 * uploader.progressAmount / uploader.progressTotal;
+    if (curProgress - lastProgress > 3) {
+      gutil.log("upload progress: " + Math.round(curProgress) + "%");
+      lastProgress = curProgress;
+    }
+  });
+
+  uploader.on('end', function() {
+    gutil.log("done uploading");
+    cb();
+  });
+});
+
 ////////////////// DEV TASKS //////////////////
 
 gulp.task('watch:js', function() {
@@ -152,8 +196,13 @@ gulp.task('build', function(cb) {
   runSequence('clean:dist', 'bundle', 'sass', 'templates', 'copy:assets', 'copy:index', 'copy:d3', cb);
 });
 
+gulp.task('deploy', function(cb) {
+  runSequence('build', 'upload', cb);
+});
+
 gulp.task('default', function(cb) {
   runSequence('build', ['watch:js', 'watch:sass', 'watch:partials', 'watch:index'], 'browser-sync', cb);
 });
+
 
 
