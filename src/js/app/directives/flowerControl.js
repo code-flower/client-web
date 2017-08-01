@@ -35,7 +35,8 @@ angular.module('CodeFlower')
     };
 
     scope.switchRepo = function(repoName) {
-      scope.$emit('switchRepo', repoName);
+      if (repoName)
+        scope.$emit('switchRepo', repoName);
     };
 
     scope.deleteRepo = function(repoName) {
