@@ -2,18 +2,11 @@
 module.exports = {
 
   // SERVER LOCATIONS
-  // origins: {
-  //   harvest: 'https://codeflower.la:8000',
-  //   email:   'https://codeflower.la:8000', 
-  //   samples: '/',
-  //   ws:      'wss://codeflower.la:8000'
-  // },
-
   origins: {
-    harvest: 'http://localhost:8000',
-    email:   'http://localhost:8000',
+    harvest: 'https://localhost:8000',
+    email:   'https://localhost:8000',
     samples: '',
-    ws:      'ws://localhost:8000'
+    ws:      'wss://localhost:8000'
   },
 
   //// HTTP ////
@@ -37,7 +30,11 @@ module.exports = {
   },
 
   paths: {
-    partials: 'app/partials/'
+    partials: 'app/partials/',
+    SSL: {
+      key:  '../devSSL/cert/server.key',
+      cert: '../devSSL/cert/server.crt'
+    } 
   },
 
   //// CLIENT-SIDE DB ////

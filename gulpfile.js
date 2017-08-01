@@ -176,6 +176,7 @@ gulp.task('browser-sync', function() {
   browserSync.init({
     port: 3000,
     server: DIST,
+    https: config.paths.SSL,
     ui: {
       port: 8090,
       weinre: {
