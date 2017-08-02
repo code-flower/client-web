@@ -3,7 +3,7 @@
 
 angular.module('CodeFlower')
 .controller('dispatcher', function(PARTIALS_DIR, MAX_NODES, $scope, $timeout, $uibModal, $q,
-                                   state, dataService, flowerUtils) {
+                                   $location, state, dataService, flowerUtils) {
 
   //// MODAL FUNCTIONS ////
 
@@ -243,14 +243,20 @@ angular.module('CodeFlower')
 
   //// STATE INITIALIZATION ////
 
+  var params = $location.search();
+  var repoParam = !!(params.owner && params.name);
+
   dataService.init()
   .then(dataService.enumerate)
   .then(function(repoNames) {
     removeLoader();
-    
     state.repoNames = repoNames;
-    if (repoNames[0])
+    if (repoParam) {
+      var gitUrl = `https://github.com/${params.owner}/${params.name}.git`;
+      doClone(gitUrl); 
+    } else if (repoNames[0]) {
       setRepo(repoNames[0]);
+    }
   });
 
 });

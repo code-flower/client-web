@@ -8,4 +8,10 @@ angular.module('CodeFlower', ['ui.bootstrap'])
   .constant('MESSAGE_TYPES', config.messageTypes)
   .constant('PARTIALS_DIR', config.paths.partials)
   .constant('DATABASE', config.database)
-  .constant('MAX_NODES', config.maxNodes);
+  .constant('MAX_NODES', config.maxNodes)
+  .config(['$locationProvider', function($locationProvider) {
+    $locationProvider.html5Mode({
+      enabled: true,
+      requireBase: false
+    });
+  }]);
