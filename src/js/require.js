@@ -2,6 +2,7 @@
 
 // vendor
 require('angular');
+require('./vendor/angular-fullscreen');
 require('./vendor/ui-bootstrap-custom-tpls-1.2.1');
 
 // all application js

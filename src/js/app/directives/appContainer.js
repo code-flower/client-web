@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('CodeFlower')
-.directive('appContainer', function(PARTIALS_DIR, state, $uibModal) {
+.directive('appContainer', function(PARTIALS_DIR, state, $uibModal, Fullscreen) {
 
   return {
     restrict: 'E',
@@ -25,21 +25,7 @@ angular.module('CodeFlower')
     };
 
     scope.toggleFullscreen = function() {
-      var app = document.getElementsByClassName('app-container')[0];
-
-      if (!scope.isFullscreen) {
-        if (app.mozRequestFullScreen)
-          app.mozRequestFullScreen();
-        else
-          app.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
-        scope.isFullscreen = true;
-      } else {
-        if (document.mozCancelFullScreen)
-          document.mozCancelFullScreen();
-        else
-          document.webkitExitFullscreen();
-        scope.isFullscreen = false;
-      }
+      scope.isFullscreen = !scope.isFullscreen;
     };
 
     // for testing modal

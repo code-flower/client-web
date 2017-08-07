@@ -2,7 +2,7 @@
 var config = require('../../../config.js');
 
 // inject config into angular app
-angular.module('CodeFlower', ['ui.bootstrap'])
+angular.module('CodeFlower', ['ui.bootstrap', 'FBAngular'])
   .constant('ORIGINS', config.origins)
   .constant('ENDPOINTS', config.endpoints)
   .constant('MESSAGE_TYPES', config.messageTypes)

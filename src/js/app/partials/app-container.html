@@ -1,4 +1,4 @@
-<div class="app-container {{state.colorScheme}}">
+<div class="app-container {{state.colorScheme}}" fullscreen="isFullscreen">
   <div class="background"></div>
 
   <flower-viz ng-show="state.repoNames.length"></flower-viz>
@@ -14,7 +14,7 @@
 
   <button
     class="toggle-fullscreen btn btn-primary"
-    ng-click="toggleFullscreen()">
-    Toggle Full Screen
+    ng-click="toggleFullscreen()"
+    ng-bind="isFullscreen ? 'Exit Full Screen' : 'Go Full Screen'">
   </button>
 </div>
