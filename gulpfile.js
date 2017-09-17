@@ -34,7 +34,8 @@ const awsCreds = require('./private/aws-creds');
 const DIST = './dist';
 
 // dev or prod
-const ENV = argv.env || process.env.NODE_ENV || 'development';
+const ENV = argv.env || process.env.NODE_ENV || 'development',
+      REMOTE_API = ENV === 'production' || !!argv.remoteApi;
 
 ///////////////// BUNDLER ////////////////////
 
@@ -42,7 +43,10 @@ gulp.task('bundle', function() {
   return browserify('./src/js/require.js')
     .transform(bulkify)
     .transform(babelify, { presets: ['es2015'] })
-    .transform(envify({ NODE_ENV: ENV }))
+    .transform(envify({ 
+      NODE_ENV: ENV, 
+      REMOTE_API
+    }))
     .on('error', console.log)
     .bundle()
     .pipe(source('bundle.js'))
@@ -226,6 +230,7 @@ gulp.task('browser-sync', function() {
   browserSync.init({
     port: 3000,
     server: DIST,
+    https: config.paths.SSL,
     ui: {
       port: 8090,
       weinre: {

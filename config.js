@@ -1,6 +1,10 @@
 
 module.exports = {
 
+  apiUrl: process.env.REMOTE_API ? 
+          'https://api.codeflower.la' : 
+          'http://localhost:8000',
+
   // SERVER LOCATIONS
   origins: {
     harvest: 'https://localhost:8000',
@@ -32,8 +36,8 @@ module.exports = {
   paths: {
     partials: 'app/partials/',
     SSL: {
-      key:  '../devSSL/cert/server.key',
-      cert: '../devSSL/cert/server.crt'
+      key:  '../sslCert/privkey.pem',
+      cert: '../sslCert/cert.pem'
     } 
   },
 

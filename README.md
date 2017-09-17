@@ -6,7 +6,8 @@
 
 #### Running the Dev Environment
 
-`gulp`
+`gulp`             -- if you're running the api locally
+`gulp --remoteApi` -- if you want to hit api.codeflower.la
 
 
 #### How to Build
