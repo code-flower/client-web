@@ -1,26 +1,29 @@
 ///////////////// MODULES ////////////////////
 
-const gulp = require('gulp');
-const browserify = require('browserify');
-const envify = require('envify/custom');
-const babelify = require('babelify');
-const browserSync = require('browser-sync').create();
-const open = require('gulp-open');
-const source = require('vinyl-source-stream');
-const buffer = require('vinyl-buffer');
-const argv = require('yargs').argv;
-const sass = require('gulp-sass');
-const autoprefixer = require('gulp-autoprefixer');
-const ngTemplates = require('gulp-ng-templates');
-const concat = require('gulp-concat');
-const clean = require('gulp-clean');
-const runSequence = require('run-sequence');
-const zip = require('gulp-zip');
-const uglify = require('gulp-uglify');
-const gutil = require('gulp-util');
-const ngAnnotate = require('gulp-ng-annotate');
-const bulkify = require('bulkify');
-const s3 = require('s3');
+const gulp          = require('gulp'),
+      browserify    = require('browserify'),
+      envify        = require('envify/custom'),
+      babelify      = require('babelify'),
+      browserSync   = require('browser-sync').create(),
+      open          = require('gulp-open'),
+      source        = require('vinyl-source-stream'),
+      buffer        = require('vinyl-buffer'),
+      argv          = require('yargs').argv,
+      sass          = require('gulp-sass'),
+      autoprefixer  = require('gulp-autoprefixer'),
+      ngTemplates   = require('gulp-ng-templates'),
+      concat        = require('gulp-concat'),
+      clean         = require('gulp-clean'),
+      runSequence   = require('run-sequence'),
+      zip           = require('gulp-zip'),
+      uglify        = require('gulp-uglify'),
+      gutil         = require('gulp-util'),
+      ngAnnotate    = require('gulp-ng-annotate'),
+      bulkify       = require('bulkify'),
+      es            = require('event-stream'),
+      rename        = require('gulp-rename'),
+      replace       = require('gulp-replace'),
+      s3            = require('s3');
 
 const config = require('./config');
 const awsCreds = require('./private/aws-creds');
@@ -112,22 +115,69 @@ gulp.task('clean:dist', function() {
     .pipe(clean());
 });
 
+///////////////////// CACHE BUST //////////////////////////
+// adds timestamps to the ends of the filenames and
+// changes the filenames in the index.html file.
+// all changes occur after the files are already in dist.
+
+gulp.task('cacheBust', function() {
+
+  // add the stamp right before the final period
+  function stampedFileName(filename, stamp) { 
+    return filename.replace(/(\.[^.]*?)$/, `-${stamp}$1`); 
+  }
+
+  const STAMP = Date.now();
+
+  const FILES_TO_STAMP = [
+    { dir: 'js',  name: 'bundle.js'    },
+    { dir: 'js',  name: 'templates.js' },
+    { dir: 'css', name: 'index.css'    }
+  ];
+
+  gutil.log("TIMESTAMP:", STAMP);
+
+  // generate the stamped filenames
+  FILES_TO_STAMP.forEach(file => {
+    file.stampedName = stampedFileName(file.name, STAMP);
+  });
+
+  // rename each file
+  let renameStreams = FILES_TO_STAMP.map(file => {
+    return gulp.src(`${DIST}/${file.dir}/${file.name}`)
+      .pipe(clean())
+      .pipe(rename(file.stampedName))
+      .pipe(gulp.dest(`${DIST}/${file.dir}`))
+  });
+
+  // replace each occurrence of the filenames in index.html
+  let replaceStream = gulp.src(`${DIST}/index.html`);
+  FILES_TO_STAMP.forEach(file => {
+    replaceStream = replaceStream.pipe(
+      replace(`${file.dir}/${file.name}`, `${file.dir}/${file.stampedName}`)
+    );
+  });
+  replaceStream.pipe(gulp.dest(DIST));
+
+  return es.merge(renameStreams.concat(replaceStream));
+});
+
 ///////////////////// UPLOAD TO S3 ////////////////////////
 
 gulp.task('upload', function(cb) {
 
-  var client = s3.createClient({
+  let client = s3.createClient({
     s3Options: awsCreds
   });
 
-  var uploader = client.uploadDir({
+  let uploader = client.uploadDir({
     localDir: DIST,
     deleteRemoved: true,
     s3Params: {
-      Bucket: 'codeflower'
+      Bucket: 'codeflower-client-web'
     },
     getS3Params: function(localFile, stat, callback) {
-      var s3Params = stat.path === 'index.html' ? 
+      let s3Params = stat.path === 'index.html' ? 
                      { CacheControl: 'max-age=0' } :
                      { CacheControl: 'max-age=604800' }
       callback(null, s3Params);
@@ -139,7 +189,7 @@ gulp.task('upload', function(cb) {
     process.exit(1); 
   });
 
-  var lastProgress = 0, curProgress;
+  let lastProgress = 0, curProgress;
   uploader.on('progress', function() {
     curProgress = 100 * uploader.progressAmount / uploader.progressTotal;
     if (curProgress - lastProgress > 3) {
@@ -176,7 +226,6 @@ gulp.task('browser-sync', function() {
   browserSync.init({
     port: 3000,
     server: DIST,
-    https: config.paths.SSL,
     ui: {
       port: 8090,
       weinre: {
@@ -194,7 +243,7 @@ gulp.task('build', function(cb) {
 });
 
 gulp.task('deploy', function(cb) {
-  runSequence('build', 'upload', cb);
+  runSequence('build', 'cacheBust', 'upload', cb);
 });
 
 gulp.task('default', function(cb) {
