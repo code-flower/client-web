@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('CodeFlower')
-.directive('contactMe', function(PARTIALS_DIR, ORIGINS, ENDPOINTS, $http) {
+.directive('contactMe', function(PARTIALS_DIR, API, $http) {
 
   return {
     restrict: 'E',
@@ -29,7 +29,8 @@ angular.module('CodeFlower')
       scope.emailDisabled = true;
       $http({
         method: 'GET',
-        url: ORIGINS.email + ENDPOINTS.email + '?message=' + encodeURIComponent(text)
+        // NOTE: this endpoint is not currently implemented
+        url: API.origin + '/' + API.endpoints.email + '?message=' + encodeURIComponent(text)
       })
       .then(function(res) {
         scope.emailStatus = 'Message sent. Thanks!';

@@ -56,7 +56,7 @@ angular.module('CodeFlower')
     return deferred.promise;
   }
 
-  function getCredentials(params) {
+  function getCredentials(data) {
     $uibModal.open({
 
       controller: 'credentialsModal',
@@ -64,17 +64,14 @@ angular.module('CodeFlower')
       animation: false,
       size: 'sm',
       resolve: {
-        params: params
+        data: data
       }
 
-    }).result.then(function(data) {
+    }).result.then(function(res) {
 
-      dataService.clone({
-        url: data.url || state.gitUrl,
-        private: true,
-        username: data.username,
-        password: data.password
-      });
+      data.params.username = res.username;
+      data.params.password = res.password;
+      dataService.clone(data.params);
 
     }).catch(function(reason) {
 
@@ -126,36 +123,31 @@ angular.module('CodeFlower')
     });
   }
 
-  function doClone(gitUrl) {
-    state.gitUrl = gitUrl;
+  function deriveGitUrlFromRepo(repo) {
+    return `https://github.com/${repo.owner}/${repo.name}.git`;
+  }
+
+  function doClone(data) {
+    state.gitUrl = data.gitUrl || deriveGitUrlFromRepo(data.repo);
     state.cloning = true;
     state.terminalOpen = true;
 
     $timeout(function() {
-      dataService.clone({ url: gitUrl });
+      dataService.clone(data.repo);
     }, 500);
   }
 
-  function handleNewRepo(repoName) {
+  function handleNewRepo(repoName, repoData) {
     state.gitUrl = '';
     state.cloning = false;
-
-    dataService.delete(repoName)
-    .then(function() {
-      return dataService.harvest(repoName)
-    })
-    .then(function(repoData) {
-
-      state.terminalOpen = false;
-      $timeout(function() {
-        if (state.repoNames.indexOf(repoName) === -1) {
-          state.repoNames.push(repoName);
-          state.repoNames.sort();
-        }
-        buildUI(repoName, repoData);
-      }, 500);
-
-    });
+    state.terminalOpen = false;
+    $timeout(function() {
+      if (state.repoNames.indexOf(repoName) === -1) {
+        state.repoNames.push(repoName);
+        state.repoNames.sort();
+      }
+      buildUI(repoName, repoData);
+    }, 500);
   }
 
   function deleteRepo(repoName) {
@@ -176,8 +168,8 @@ angular.module('CodeFlower')
 
   //// EVENT LISTENERS ////
 
-  $scope.$on('doClone', function(e, gitUrl) {
-    doClone(gitUrl);
+  $scope.$on('doClone', function(e, data) {
+    doClone(data);
   });
 
   $scope.$on('abortClone', function(e, data) {
@@ -187,13 +179,11 @@ angular.module('CodeFlower')
   });
 
   $scope.$on('needCredentials', function(e, data) {
-    getCredentials(angular.extend(data, {
-      gitUrl: state.gitUrl
-    }));
+    getCredentials(data);
   });
 
   $scope.$on('cloneComplete', function(e, data) {
-    handleNewRepo(data.repoName);
+    handleNewRepo(data.fullName, data.cloc.tree);
   });
 
   $scope.$on('cloneError', function(e, data) {
@@ -243,20 +233,17 @@ angular.module('CodeFlower')
 
   //// STATE INITIALIZATION ////
 
-  var params = $location.search();
-  var repoParam = !!(params.owner && params.name);
-
   dataService.init()
   .then(dataService.enumerate)
   .then(function(repoNames) {
     removeLoader();
     state.repoNames = repoNames;
-    if (repoParam) {
-      var gitUrl = `https://github.com/${params.owner}/${params.name}.git`;
-      doClone(gitUrl); 
-    } else if (repoNames[0]) {
+
+    var params = $location.search();
+    if (params.owner && params.name)
+      doClone({ repo: params });
+    else if (repoNames[0])
       setRepo(repoNames[0]);
-    }
   });
 
 });

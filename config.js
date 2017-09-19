@@ -1,36 +1,28 @@
 
 module.exports = {
 
-  apiUrl: process.env.REMOTE_API ? 
-          'https://api.codeflower.la' : 
-          'http://localhost:8000',
-
-  // SERVER LOCATIONS
-  origins: {
-    harvest: 'https://localhost:8000',
-    email:   'https://localhost:8000',
-    samples: '',
-    ws:      'wss://localhost:8000'
-  },
-
-  //// HTTP ////
-  endpoints: {
-    harvest: '/harvest',
-    email:   '/email',
-    samples: '/data/samples.json'
-  }, 
-
-  //// WS ////
-  messageTypes: {
-    // from client to server
-    clone:        'clone',
-    abort:        'abort',
-    // from server to client
-    text:         'text',
-    error:        'error',
-    credentials:  'credentials',
-    unauthorized: 'unauthorized',
-    complete:     'complete'
+  api: {
+    origin: process.env.REMOTE_API ? 
+            'wss://api.codeflower.la' : 
+            'wss://localhost:8000',
+    endpoints: {
+      cloc: 'cloc'
+    },
+    responseTypes: {
+      success: 'success',
+      error:   'error',
+      update:  'update'
+    },
+    errorNames: {
+      ParseError:             'ParseError',
+      EndpointNotRecognized:  'EndpointNotRecognized',
+      MethodNotAllowed:       'MethodNotAllowed',
+      NeedOwnerAndName:       'NeedOwnerAndName',
+      NeedCredentials:        'NeedCredentials',
+      CredentialsInvalid:     'CredentialsInvalid',
+      RepoNotFound:           'RepoNotFound',
+      BranchNotFound:         'BranchNotFound'
+    }
   },
 
   paths: {
@@ -38,10 +30,9 @@ module.exports = {
     SSL: {
       key:  '../sslCert/privkey.pem',
       cert: '../sslCert/cert.pem'
-    } 
+    }
   },
 
-  //// CLIENT-SIDE DB ////
   database: {
     dbName: 'repos',
     tableName: 'repoTable'

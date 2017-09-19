@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('CodeFlower')
-.factory('WS', function(ORIGINS, MESSAGE_TYPES, $rootScope, state) {
+.factory('WS', function(API, $rootScope, state) {
 
   // initiates a clone on the backend,
   // monitors progress over a websockets connection,
@@ -10,14 +10,14 @@ angular.module('CodeFlower')
 
   return {
 
-    cloneRepo: function(data, subscribers) {
+    cloneRepo: function(repo, subscribers, onSuccess) {
       
-      var socket = new WebSocket(ORIGINS.ws);
+      var socket = new WebSocket(API.origin);
 
       socket.onopen = function(e) {
         socket.send(JSON.stringify({
-          type: MESSAGE_TYPES.clone,
-          repo: data
+          endpoint: API.endpoints.cloc,
+          params: repo
         }));  
       };
 
@@ -25,53 +25,57 @@ angular.module('CodeFlower')
 
         // halt if the clone has been aborted
         if (!state.cloning) {
-          socket.send(JSON.stringify({
-            type: MESSAGE_TYPES.abort
-          }));
+          socket.close();
           return;
         }
 
         // otherwise handle the event
-        var data = JSON.parse(event.data);
-        var types = MESSAGE_TYPES;
+        var message = JSON.parse(event.data);
+        var types = API.responseTypes;
 
-        switch(data.type) {
-          case types.text:
+        switch(message.type) {
+          case types.update:
             subscribers.forEach(function(subscriber) {
-              subscriber(data.text);
-            });    
+              subscriber(message.data.text);
+            });
             break;
+
+          case types.success: 
+            onSuccess(message.data);
+            $rootScope.$broadcast('cloneComplete', message.data);
+            break;
+
           case types.error:
-            socket.close();
-            $rootScope.$broadcast('cloneError');
-            break;
-          case types.credentials:
-            socket.close();
-            $rootScope.$broadcast('needCredentials', {
-              needHTTPS: data.needHTTPS
-            });
-            break;
-          case types.unauthorized:
-            socket.close();
-            $rootScope.$broadcast('needCredentials', { 
-              invalid: true 
-            });
-            break;
-          case types.complete:
-            socket.close();
-            $rootScope.$broadcast('cloneComplete', { 
-              repoName: data.repoName
-            });
+            var errNames = API.errorNames;
+
+            switch(message.data.name) {
+              case errNames.NeedCredentials:
+                $rootScope.$broadcast('needCredentials', {
+                  params: message.data.params
+                });
+                break;
+              case errNames.CredentialsInvalid:
+                $rootScope.$broadcast('needCredentials', {
+                  params: message.data.params,
+                  invalid: true
+                });
+                break;
+              default:
+                console.log('Unhandled error:', message.data);
+                $rootScope.$broadcast('cloneError', message.data);
+                break;
+            }
+
             break;
         }
       };
 
       socket.onclose = function(e) {
-        // console.log("WS connection closed");
+        //console.log('WS connection closed');
       };
 
       socket.onerror = function(err) {
-        console.error("WS connection error:", err);
+        console.error('WS connection error:', err);
       };
     }
 

@@ -3,9 +3,7 @@ var config = require('../../../config.js');
 
 // inject config into angular app
 angular.module('CodeFlower', ['ui.bootstrap', 'FBAngular'])
-  .constant('ORIGINS', config.origins)
-  .constant('ENDPOINTS', config.endpoints)
-  .constant('MESSAGE_TYPES', config.messageTypes)
+  .constant('API', config.api)
   .constant('PARTIALS_DIR', config.paths.partials)
   .constant('DATABASE', config.database)
   .constant('MAX_NODES', config.maxNodes)

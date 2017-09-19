@@ -2,28 +2,22 @@
 'use strict';
 
 angular.module('CodeFlower')
-.controller('credentialsModal', function($scope, params) {
+.controller('credentialsModal', function($scope, data) {
 
   //// SCOPE VARIABLES ////
 
   $scope.username = '';
   $scope.password = '';
-  $scope.url = '';
-  $scope.needHTTPS = params.needHTTPS;
-  $scope.gitUrl = params.gitUrl;
+  $scope.fullName = data.params.owner + '/' + data.params.name;
+  $scope.invalid = data.invalid;
 
   //// SCOPE FUNCTIONS ////
 
   $scope.clone = function() {
-    var obj = {
+    $scope.$close({
       username: $scope.username,
       password: $scope.password
-    };
-
-    if (params.needHTTPS)
-      obj.url = $scope.url;
-
-    $scope.$close(obj);
+    });
   };
 
   $scope.abort = $scope.$dismiss;

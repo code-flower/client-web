@@ -14,6 +14,19 @@ angular.module('CodeFlower')
 
   function link(scope, el, attrs) {
 
+    //// PRIVATE FUNCTIONS ////
+
+    function extractRepoFromGitUrl(url) {
+      var match = url.match(/([^:\/]*?)\/([^\/]*?)\.git$/);
+      if (match && match[1] && match[2])
+        return {
+          owner: match[1],
+          name: match[2]
+        };
+      else
+        return null;
+    }
+
     //// SCOPE VARIABLES ////
 
     scope.state = state;
@@ -27,7 +40,16 @@ angular.module('CodeFlower')
     //// EVENT EMITTERS ////
 
     scope.doClone = function(gitUrl) {
-      scope.$emit('doClone', gitUrl);
+      var repo = extractRepoFromGitUrl(gitUrl);
+      if (repo) {
+        scope.$emit('doClone', {
+          repo: repo, 
+          gitUrl: gitUrl
+        });
+      } else {
+        console.log('Not a valid git clone url. Need a modal for this.')
+        scope.gitUrl = '';
+      }
     };
 
     scope.abortClone = function() {
