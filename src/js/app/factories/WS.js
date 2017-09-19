@@ -2,17 +2,17 @@
 'use strict';
 
 angular.module('CodeFlower')
-.factory('WS', function(API, $rootScope, state) {
+.factory('WS', function(API, $q, state) {
 
   // initiates a clone on the backend,
   // monitors progress over a websockets connection,
   // and broadcasts to the subscribers
 
   return {
-
-    cloneRepo: function(repo, subscribers, onSuccess) {
+    cloneRepo: function(repo) {
       
-      var socket = new WebSocket(API.origin);
+      var deferred = $q.defer(),
+          socket = new WebSocket(API.origin);
 
       socket.onopen = function(e) {
         socket.send(JSON.stringify({
@@ -22,52 +22,25 @@ angular.module('CodeFlower')
       };
 
       socket.onmessage = function(event) {
-
         // halt if the clone has been aborted
         if (!state.cloning) {
           socket.close();
-          return;
+          deferred.reject('Clone aborted');
         }
 
         // otherwise handle the event
         var message = JSON.parse(event.data);
         var types = API.responseTypes;
 
-        switch(message.type) {
-          case types.update:
-            subscribers.forEach(function(subscriber) {
-              subscriber(message.data.text);
-            });
-            break;
+        var deferFunc = (function() {
+          switch(message.type) {
+            case types.update:  return deferred.notify;
+            case types.success: return deferred.resolve;
+            case types.error:   return deferred.reject;
+          }
+        })();
 
-          case types.success: 
-            onSuccess(message.data);
-            $rootScope.$broadcast('cloneComplete', message.data);
-            break;
-
-          case types.error:
-            var errNames = API.errorNames;
-
-            switch(message.data.name) {
-              case errNames.NeedCredentials:
-                $rootScope.$broadcast('needCredentials', {
-                  params: message.data.params
-                });
-                break;
-              case errNames.CredentialsInvalid:
-                $rootScope.$broadcast('needCredentials', {
-                  params: message.data.params,
-                  invalid: true
-                });
-                break;
-              default:
-                console.log('Unhandled error:', message.data);
-                $rootScope.$broadcast('cloneError', message.data);
-                break;
-            }
-
-            break;
-        }
+        deferFunc(message.data);
       };
 
       socket.onclose = function(e) {
@@ -76,8 +49,10 @@ angular.module('CodeFlower')
 
       socket.onerror = function(err) {
         console.error('WS connection error:', err);
+        deferred.reject(err);
       };
-    }
 
+      return deferred.promise;
+    }
   };
 });

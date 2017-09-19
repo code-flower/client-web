@@ -2,13 +2,52 @@
 'use strict';
 
 angular.module('CodeFlower')
-.factory('dataService', function(dbAccess, WS) {
+.factory('dataService', function(dbAccess, WS, API, $rootScope) {
 
   //// PRIVATE ////
 
   // an array of callbacks to call when 
   // progress is made on the clone
   var subscribers = [];
+
+  function onCloneSuccess(data) {
+    $rootScope.$broadcast('cloneComplete', data);
+    return dbAccess.delete(data.fullName)
+      .then(function() {
+        return dbAccess.set(data.fullName, data.cloc)
+      })
+      .then(function() {
+        return data;
+      });
+  }
+
+  function onCloneError(err) {
+    var eNames = API.errorNames;
+    switch(err.name) {
+      case eNames.NeedCredentials:
+        $rootScope.$broadcast('needCredentials', {
+          params: err.params
+        });
+        break;
+      case eNames.CredentialsInvalid:
+        $rootScope.$broadcast('needCredentials', {
+          params: err.params,
+          invalid: true
+        });
+        break;
+      default:
+        console.log('Unhandled error:', message.data);
+        $rootScope.$broadcast('cloneError', message.data);
+        break;
+    }
+    return err;
+  }
+
+  function onCloneNotify(data) {
+    subscribers.forEach(function(subscriber) {
+      subscriber(data.text);
+    });
+  }
 
   //// THE SERVICE ////
 
@@ -23,12 +62,8 @@ angular.module('CodeFlower')
     },
 
     clone: function(repo) {
-      WS.cloneRepo(repo, subscribers, function(data) {
-        dbAccess.delete(data.fullName)
-          .then(function() {
-            dbAccess.set(data.fullName, data.cloc);
-          });
-      });
+      return WS.cloneRepo(repo)
+        .then(onCloneSuccess, onCloneError, onCloneNotify);
     },
 
     harvest: function(repoName) {
