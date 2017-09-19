@@ -24,7 +24,7 @@ angular.module('CodeFlower')
         size: 'sm',
         resolve: {
           params: {
-            repoName: state.currentRepo.name,
+            repoName: state.currentRepo.fullName,
             numNodes: numNodes
           }
         }
@@ -90,7 +90,7 @@ angular.module('CodeFlower')
   }
 
   function setFolder(folderPath) {
-    var folder = flowerUtils.getFolder(state.currentRepo.data, folderPath.pathName);
+    var folder = flowerUtils.getFolder(state.currentRepo.cloc.tree, folderPath.pathName);
     state.currentFolder = {
       path: folderPath,
       data: folder
@@ -103,12 +103,9 @@ angular.module('CodeFlower')
     flowerUtils.setLanguageColors(state.languages, state.colorScheme);
   }
 
-  function buildUI(repoName, repoData) {
-    state.currentRepo = {
-      name: repoName,
-      data: repoData
-    };
-    state.folderPaths = flowerUtils.getFolderPaths(repoData);
+  function buildUI(repoData) {
+    state.currentRepo = repoData;
+    state.folderPaths = flowerUtils.getFolderPaths(repoData.cloc.tree);
 
     getCurrentPathIndex()
     .then(function(curPathIdx) {
@@ -119,7 +116,7 @@ angular.module('CodeFlower')
   function setRepo(repoName) {
     dataService.harvest(repoName)
     .then(function(repoData) {
-      buildUI(repoName, repoData);
+      buildUI(repoData);
     });
   }
 
@@ -137,16 +134,18 @@ angular.module('CodeFlower')
     }, 500);
   }
 
-  function handleNewRepo(repoName, repoData) {
+  function handleNewRepo(repoData) {
     state.gitUrl = '';
     state.cloning = false;
     state.terminalOpen = false;
+
+    var repoName= repoData.fullName;
     $timeout(function() {
       if (state.repoNames.indexOf(repoName) === -1) {
         state.repoNames.push(repoName);
         state.repoNames.sort();
       }
-      buildUI(repoName, repoData);
+      buildUI(repoData);
     }, 500);
   }
 
@@ -183,7 +182,7 @@ angular.module('CodeFlower')
   });
 
   $scope.$on('cloneComplete', function(e, data) {
-    handleNewRepo(data.fullName, data.cloc.tree);
+    handleNewRepo(data);
   });
 
   $scope.$on('cloneError', function(e, data) {
@@ -210,7 +209,7 @@ angular.module('CodeFlower')
 
   $scope.$on('switchColorScheme', function(e, colorScheme) {
     state.colorScheme = colorScheme;
-    setRepo(state.currentRepo.name);
+    setRepo(state.currentRepo.fullName);
   });
 
   $scope.$on('deleteDB', function(e, data) {
@@ -222,7 +221,7 @@ angular.module('CodeFlower')
     if (state.colorScheme !== data.prefs.colorScheme) {
       $timeout(function() {
         state.colorScheme = data.prefs.colorScheme;
-        setRepo(state.currentRepo.name);
+        setRepo(state.currentRepo.fullName);
       }, 250);
     }
   });

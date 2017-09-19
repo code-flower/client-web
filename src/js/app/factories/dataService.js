@@ -14,7 +14,7 @@ angular.module('CodeFlower')
     $rootScope.$broadcast('cloneComplete', data);
     return dbAccess.delete(data.fullName)
       .then(function() {
-        return dbAccess.set(data.fullName, data.cloc)
+        return dbAccess.set(data.fullName, data);
       })
       .then(function() {
         return data;
@@ -67,16 +67,13 @@ angular.module('CodeFlower')
     },
 
     harvest: function(repoName) {
-      return dbAccess.get(repoName)
-        .then(function(data) {
-          return data.tree;
-        });
+      return dbAccess.get(repoName);
     },
 
     getIgnored: function(repoName) {
       return dbAccess.get(repoName) 
         .then(function(data) {
-          return data.ignored;
+          return data.cloc.ignored;
         });
     },
 

@@ -84,7 +84,7 @@ angular.module('CodeFlower')
       scope.gitUrl = newVal;
     });
 
-    scope.$watch('state.currentRepo.name', function(newVal, oldVal) {
+    scope.$watch('state.currentRepo.fullName', function(newVal, oldVal) {
       scope.selectedRepo = newVal;
     });
 

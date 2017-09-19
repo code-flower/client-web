@@ -27,7 +27,7 @@ angular.module('CodeFlower')
     //// SCOPE VARS ////
 
     scope.repoNames = state.repoNames;
-    scope.selectedRepo = state.currentRepo.name;
+    scope.selectedRepo = state.currentRepo.fullName;
     scope.ignoredText = '';
 
     //// SCOPE FUNCTIONS ////
