@@ -11,48 +11,28 @@ angular.module('CodeFlower')
 
   //// PRIVATE ////
 
-  var DB;           // the database object
-  var getSamples;   // a function to get samples from the back end
-
-  function loadSamples() {
-    return getSamples().then(function(samples) {
-      return $q.all(samples.map(function(repo) {
-        return service.set(repo.name, repo.data);
-      }));
-    });
-  }
+  var DB;
 
   //// THE SERVICE ////
 
   var service = {
 
-    init: function(getSamplesFunc) {
-      getSamples = getSamplesFunc;
-
+    init: function() {
       var deferred = $q.defer();
       var openRequest = indexedDB.open(repoDB, 1);
-      var firstTime = false;
 
       // this runs only if the database was just created
       // the onsuccess function runs immediately afterwards
       openRequest.onupgradeneeded = function(e) {
         var thisDB = e.target.result;
-        if (!thisDB.objectStoreNames.contains(repoTable)) {
+        if (!thisDB.objectStoreNames.contains(repoTable))
           thisDB.createObjectStore(repoTable);
-          firstTime = true;
-        }
       };
 
       // this runs every time the DB is opened
       openRequest.onsuccess = function(e) {
         DB = e.target.result;
-
-        if (firstTime) 
-          loadSamples().then(function() {
-            deferred.resolve(e);
-          });
-        else 
-          deferred.resolve(e);
+        deferred.resolve(e);
       };
 
       openRequest.onerror = function(e) {

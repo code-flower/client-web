@@ -13,14 +13,6 @@ angular.module('CodeFlower')
       .then(function(res) {
         return res.data;
       });
-    },
-
-    getSamples: function() {
-      var url = ORIGINS.samples + ENDPOINTS.samples;
-      return $http.get(url)
-      .then(function(res) {
-        return res.data;
-      });
     }
 
   };

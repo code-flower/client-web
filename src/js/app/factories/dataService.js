@@ -15,7 +15,7 @@ angular.module('CodeFlower')
   return {
 
     init: function() {
-      return dbAccess.init(HTTP.getSamples);
+      return dbAccess.init();
     },
 
     // list the repos in the client-side DB
