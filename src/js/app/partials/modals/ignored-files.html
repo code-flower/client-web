@@ -16,7 +16,13 @@
         value="{{name}}"
         ng-bind="name" />
     </select>
-    <span ng-if="!multipleRepos">{{selectedRepo}}</span>
+    <span 
+      ng-if="!multipleRepos">
+      {{selectedRepo}}
+    </span>
   </div>
-  <div class="ignored-text" ng-bind-html="ignoredText"></div>
+  <div 
+    class="ignored-text" 
+    ng-bind-html="ignoredText">
+  </div>
 </div>

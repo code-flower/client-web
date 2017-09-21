@@ -167,6 +167,9 @@ angular.module('CodeFlower')
 
   //// EVENT LISTENERS ////
 
+  //// I. UI-generated events ////
+
+  // A. Flower Control
   $scope.$on('doClone', function(e, data) {
     doClone(data);
   });
@@ -175,20 +178,6 @@ angular.module('CodeFlower')
     state.gitUrl = '';
     state.cloning = false;
     state.terminalOpen = false;
-  });
-
-  $scope.$on('needCredentials', function(e, data) {
-    getCredentials(data);
-  });
-
-  $scope.$on('cloneComplete', function(e, data) {
-    handleNewRepo(data);
-  });
-
-  $scope.$on('cloneError', function(e, data) {
-    $timeout(function() { 
-      state.cloning = false; 
-    });
   });
 
   $scope.$on('switchRepo', function(e, repoName) {
@@ -203,28 +192,37 @@ angular.module('CodeFlower')
     setFolder(folderPath);
   });
 
-  $scope.$on('switchSort', function (e, sortParams) {
-    setSort(sortParams);
-  });
-
   $scope.$on('switchColorScheme', function(e, colorScheme) {
     state.colorScheme = colorScheme;
     setRepo(state.currentRepo.fullName);
   });
 
+  // B. Flower Languages
+  $scope.$on('switchSort', function (e, sortParams) {
+    setSort(sortParams);
+  });
+
+  // C. Main Modal ('Other' tab)
   $scope.$on('deleteDB', function(e, data) {
     dataService.deleteDB();
     location.reload();
   });
 
-  $scope.$on('prefsChanged', function(e, data) {
-    if (state.colorScheme !== data.prefs.colorScheme) {
-      $timeout(function() {
-        state.colorScheme = data.prefs.colorScheme;
-        setRepo(state.currentRepo.fullName);
-      }, 250);
-    }
+  //// II. API-generated events ////
+
+  $scope.$on('needCredentials', function(e, data) {
+    getCredentials(data);
   });
+
+  $scope.$on('cloneComplete', function(e, data) {
+    handleNewRepo(data);
+  });
+
+  $scope.$on('cloneError', function(e, data) {
+    $timeout(function() { state.cloning = false; });
+  });
+
+  //// III. Other events ////
 
   $scope.$on('flowerLoaded', function() {
     state.initialLoad = false;

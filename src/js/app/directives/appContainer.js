@@ -27,11 +27,6 @@ angular.module('CodeFlower')
     scope.toggleFullscreen = function() {
       scope.isFullscreen = !scope.isFullscreen;
     };
-
-    // for testing modal
-    // setTimeout(function() {
-    //    scope.openPrefs();
-    // }, 500);
   }
 
 });
