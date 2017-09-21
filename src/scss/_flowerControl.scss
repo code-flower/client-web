@@ -42,15 +42,17 @@
     width: 332px;
   }
   &.single-repo {
-    select {
-      width: 230px;
+    .repo-and-branch {
+      margin: 10px;
+      .repo-name {
+        font-weight: bold;
+        font-size: 16px;
+      }
     }
-    tr {
-      height: 35px;
-    }
-    tr:nth-child(1) td:last-child,
-    tr:nth-child(2) td:last-child {
-      padding-left: 14px;
+    .two-col {
+      width: 100%;
+      max-width: 280px;
+      min-width: 220px;
     }
   }
 }

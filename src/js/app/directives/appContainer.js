@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('CodeFlower')
-.directive('appContainer', function(PARTIALS_DIR, state, $uibModal, Fullscreen) {
+.directive('appContainer', function(PARTIALS_DIR, FEATURES, state, $uibModal, Fullscreen) {
 
   return {
     restrict: 'E',
@@ -15,6 +15,7 @@ angular.module('CodeFlower')
   function link (scope, el, attrs) {
     scope.state = state;
     scope.isFullscreen = false;
+    scope.multipleRepos = FEATURES.multipleRepos;
 
     scope.openModal = function() {
       $uibModal.open({

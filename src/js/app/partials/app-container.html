@@ -1,18 +1,17 @@
 <div class="app-container {{state.colorScheme}}" fullscreen="isFullscreen">
   <div class="background"></div>
+  
+  <flower-viz ng-show="state.currentRepo"></flower-viz>
+  <flower-languages ng-show="state.currentRepo"></flower-languages>
+  <flower-control ng-show="state.currentRepo || multipleRepos"></flower-control>
   <flower-terminal></flower-terminal>
 
   <div ng-show="state.currentRepo">
-    <flower-viz></flower-viz>
-    <flower-languages></flower-languages>
-    <flower-control></flower-control>
-
     <button 
       class="open-modal btn btn-primary" 
       ng-click="openModal()">
       WTF?
     </button>
-
     <button
       class="toggle-fullscreen btn btn-primary"
       ng-click="toggleFullscreen()"

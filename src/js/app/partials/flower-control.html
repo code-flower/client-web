@@ -1,7 +1,16 @@
-<div class="flower-control" 
-    ng-class="{'single-repo': !multipleRepos}">
+<div 
+  class="flower-control" 
+  ng-class="{'single-repo': !multipleRepos}">
+
+  <div ng-if="!multipleRepos" class="repo-and-branch">
+    <span class="repo-name">{{state.currentRepo.fullName}}</span>
+    <br/>
+    <span>({{state.currentRepo.branch}})</span>
+  </div>
+  
   <table>
-    <tr ng-if="multipleRepos">
+    <tr 
+      ng-if="multipleRepos">
       <td><label>add new repo</label></td>
       <td>
         <input 
@@ -26,8 +35,9 @@
         </button>
       </td>
     </tr>
-    <tr ng-if="multipleRepos"
-        ng-show="state.repoNames.length">
+    <tr 
+      ng-if="multipleRepos"
+      ng-show="state.repoNames.length">
       <td><label>current repo</label></td>
       <td>
         <select 
@@ -49,17 +59,8 @@
         </button>
       </td>
     </tr>
-    <tr ng-if="!multipleRepos" 
-        ng-show="state.repoNames.length">
-      <td><label>repo</label></td>
-      <td>{{state.currentRepo.fullName}}</td>
-    </tr>
-    <tr ng-if="!multipleRepos" 
-        ng-show="state.repoNames.length">
-      <td><label>branch</label></td>
-      <td>{{state.currentRepo.branch}}</td>
-    </tr>
-    <tr ng-show="state.repoNames.length">
+    <tr 
+      ng-show="state.repoNames.length">
       <td><label>folder</label></td>
       <td colspan="2">
         <select 
@@ -74,7 +75,8 @@
         </select>
       </td>
     </tr>
-    <tr ng-show="state.repoNames.length">
+    <tr 
+      ng-show="state.repoNames.length">
       <td><label>scheme</label></td>
       <td colspan="2">
         <select 
