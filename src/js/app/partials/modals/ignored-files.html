@@ -5,8 +5,9 @@
     program ignores certain files for various reasons. It also tells you why.
   </p>
   <div class="label-with-select">
-    <label>Repo</label>
+    <label>repo:</label>
     <select 
+      ng-if="multipleRepos"
       ng-model="selectedRepo"
       ng-change="displayIgnored(selectedRepo)"
       class="form-control">
@@ -15,6 +16,7 @@
         value="{{name}}"
         ng-bind="name" />
     </select>
+    <span ng-if="!multipleRepos">{{selectedRepo}}</span>
   </div>
   <div class="ignored-text" ng-bind-html="ignoredText"></div>
 </div>

@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('CodeFlower')
-.directive('flowerControl', function(PARTIALS_DIR, MAX_NODES, state, colorSchemes) {
+.directive('flowerControl', function(PARTIALS_DIR, MAX_NODES, FEATURES, state, colorSchemes) {
 
   return {
     restrict: 'E',
@@ -36,6 +36,7 @@ angular.module('CodeFlower')
     scope.selectedColorScheme = '';
     scope.colorSchemes = Object.keys(colorSchemes);
     scope.maxNodes = MAX_NODES;
+    scope.multipleRepos = FEATURES.multipleRepos;
 
     //// EVENT EMITTERS ////
 

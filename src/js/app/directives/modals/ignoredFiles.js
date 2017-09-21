@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('CodeFlower')
-.directive('ignoredFiles', function(PARTIALS_DIR, state, dataService, $sce) {
+.directive('ignoredFiles', function(PARTIALS_DIR, FEATURES, state, dataService, $sce) {
 
   return {
     restrict: 'E',
@@ -29,6 +29,7 @@ angular.module('CodeFlower')
     scope.repoNames = state.repoNames;
     scope.selectedRepo = state.currentRepo.fullName;
     scope.ignoredText = '';
+    scope.multipleRepos = FEATURES.multipleRepos;
 
     //// SCOPE FUNCTIONS ////
 

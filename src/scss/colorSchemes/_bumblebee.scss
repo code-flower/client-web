@@ -36,4 +36,9 @@
       display: none;
     }
   }
+  .flower-control.single-repo {
+    td:last-child {
+      color: white;
+    }
+  }
 }

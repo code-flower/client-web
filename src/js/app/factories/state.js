@@ -9,10 +9,7 @@ angular.module('CodeFlower')
 
     repoNames: [],
 
-    currentRepo: {
-      name: '',
-      data: null
-    },
+    currentRepo: null,
 
     folderPaths: [],
 

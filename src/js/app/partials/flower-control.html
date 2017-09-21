@@ -1,7 +1,8 @@
-<div class="flower-control">
+<div class="flower-control" 
+    ng-class="{'single-repo': !multipleRepos}">
   <table>
-    <tr>
-      <td><label>Add new repo</label></td>
+    <tr ng-if="multipleRepos">
+      <td><label>add new repo</label></td>
       <td>
         <input 
           type="text" 
@@ -25,8 +26,9 @@
         </button>
       </td>
     </tr>
-    <tr ng-show="state.repoNames.length">
-      <td><label>Current repo</label></td>
+    <tr ng-if="multipleRepos"
+        ng-show="state.repoNames.length">
+      <td><label>current repo</label></td>
       <td>
         <select 
           ng-model="selectedRepo"
@@ -47,8 +49,18 @@
         </button>
       </td>
     </tr>
+    <tr ng-if="!multipleRepos" 
+        ng-show="state.repoNames.length">
+      <td><label>repo</label></td>
+      <td>{{state.currentRepo.fullName}}</td>
+    </tr>
+    <tr ng-if="!multipleRepos" 
+        ng-show="state.repoNames.length">
+      <td><label>branch</label></td>
+      <td>{{state.currentRepo.branch}}</td>
+    </tr>
     <tr ng-show="state.repoNames.length">
-      <td><label>Current folder</label></td>
+      <td><label>folder</label></td>
       <td colspan="2">
         <select 
           ng-model="selectedFolder" 
@@ -63,7 +75,7 @@
       </td>
     </tr>
     <tr ng-show="state.repoNames.length">
-      <td><label>Color scheme</label></td>
+      <td><label>scheme</label></td>
       <td colspan="2">
         <select 
           ng-model="selectedColorScheme" 
