@@ -44,12 +44,11 @@ angular.module('CodeFlower')
       var h = Math.max(parseInt(Math.sqrt(total) * 100, 10) + padding, window.innerHeight - 12);
       var w = h;
       
-      // vertically center the flower
+      // center the flower
       var viz = document.getElementById('visualization');
-      var topMargin = Math.max(window.innerHeight - h, 0) / 2.0;
-      var leftMargin = Math.max(window.innerWidth - w, 0) / 2.0;
-      viz.style.marginTop = topMargin + 'px';
-      viz.style.marginleft = leftMargin + 'px';
+      viz.style.height = h + 'px';
+      viz.style.width = w + 'px';
+      flowerUtils.centerViz();
 
       // create the flower
       currentCodeFlower = new CodeFlower('#visualization', w, h).update(json);

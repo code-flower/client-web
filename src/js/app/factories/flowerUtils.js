@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('CodeFlower')
-.factory('flowerUtils', function(colorSchemes) {
+.factory('flowerUtils', function(colorSchemes, $timeout) {
 
   //// PRIVATE ////
 
@@ -136,6 +136,30 @@ angular.module('CodeFlower')
         if (node.children) 
           node.children.forEach(recurse);
       })(json);
+    },
+
+    centerViz: function() {
+      var viz = document.getElementById('visualization'),
+          vizHeight = viz.offsetHeight,
+          vizWidth = viz.offsetWidth;
+
+      var app = document.getElementsByClassName('app-container')[0],
+          appHeight = app.offsetHeight,
+          appWidth = app.offsetWidth;
+
+      // handle situation where viz is smaller than viewport
+      // create top and left margins
+      var topMargin = Math.max(appHeight - vizHeight, 0) / 2.0;
+      var leftMargin = Math.max(appWidth - vizWidth, 0) / 2.0;
+      viz.style.marginTop = topMargin + 'px';
+      viz.style.marginLeft = leftMargin + 'px';
+
+      // viz larger than viewport
+      // scroll to the right place
+      var scrollTop = (vizHeight - appHeight) / 2.0;
+      var scrollLeft = (vizWidth - appWidth) / 2.0;
+      app.scrollTop = scrollTop;
+      app.scrollLeft = scrollLeft;
     }
 
   };
