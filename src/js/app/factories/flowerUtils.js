@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('CodeFlower')
-.factory('flowerUtils', function(colorSchemes, $timeout) {
+.factory('flowerUtils', function(colorSchemes) {
 
   //// PRIVATE ////
 
@@ -51,6 +51,7 @@ angular.module('CodeFlower')
     // return the portion of a repo object
     // indicated by the given folderPath
     getFolder: function(repo, folderPath) {
+      console.log("running get folder:", folderPath);
       var folder = repo;
       var props = folderPath.split('/');
       for (var i = 1; i < props.length; i++)  {

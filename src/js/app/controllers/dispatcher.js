@@ -243,5 +243,7 @@ angular.module('CodeFlower')
       setRepo(repoNames[0]);
   });
 
+  document.body.onresize = flowerUtils.centerViz;
+
 });
 
