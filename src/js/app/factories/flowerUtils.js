@@ -50,8 +50,7 @@ angular.module('CodeFlower')
 
     // return the portion of a repo object
     // indicated by the given folderPath
-    getFolder: function(repo, folderPath) {
-      console.log("running get folder:", folderPath);
+    getFolder: function(repo, folderPath, depth) {
       var folder = repo;
       var props = folderPath.split('/');
       for (var i = 1; i < props.length; i++)  {
@@ -62,7 +61,35 @@ angular.module('CodeFlower')
           }
         }
       }
-      return folder;
+
+      if (typeof depth === 'undefined')
+        return folder;
+
+      // CURRENTLY UNUSED (because depth is always undefined):
+      // in case I ever implement a "depth" dropdown,
+      // this prunes the folder to the given depth
+      var prunedFolder = (function recurse(tree, depth) {
+        if (tree.children) {
+          if (depth === 0)
+            return null;
+          else {
+            return {
+              name: tree.name,
+              children: tree.children.map(child => {
+                return recurse(child, depth - 1);
+              }).filter(child => !!child)
+            };
+          }
+        } else {
+          var newTree = {};
+          for (var key in tree)
+            if (tree.hasOwnProperty(key))
+              newTree[key] = tree[key];
+          return newTree;
+        }
+      })(folder, depth);
+
+      return prunedFolder;
     },
 
     // get an array for all of the languages
