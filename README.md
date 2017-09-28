@@ -1,12 +1,13 @@
 
 #### See the app
 
-[codeflower.la](http://codeflower.la)
+[web.codeflower.la](https://web.codeflower.la)
 
 
 #### Running the Dev Environment
 
-`gulp`             -- if you're running the api locally
+`gulp` -- if you're running the api locally
+
 `gulp --remoteApi` -- if you want to hit api.codeflower.la
 
 
@@ -14,53 +15,26 @@
 
 `gulp build [--env=production]`
 
-The production flag will cause assets to be minified.
+This builds the app into the `dist/` folder. The production flag 
+will cause assets to be minified.
 
 
-#### Deploying to production
+#### Deploying to Production
 
-1. install the node version manager
-  -- see https://github.com/creationix/nvm for the command
+`gulp deploy --env production`
 
-2. use `nvm` to install node version 6.9.1 
-  
-  ```nvm install 6.9.1.```
+This will build the production version of the app (w/ minified assets),
+timestamp the js and css files for cache-busting purposes, and upload
+the dist/ folder to the s3 bucket specified in the config.
 
-3. use `npm` to globally install `gulp`, `cloc`, and `forever`
+You can check that the deploy succeeded by opening a browser to 
+web.codeflower.la, opening the Elements tab of the Chrome inspector,
+and comparing the timestamps on the js and css files to the timestamp
+in the output form the `gulp deploy` command. 
 
-4. clone the repo
-
-5. create a file at private/gmail-credentials.js that contains this:
-
-  ```
-  module.exports = {
-    email:    '[gmail address]',
-    password: '[gmail password]'
-  };
-  ```
-
-6. install an SSL certificate and set up automatic renewal
-  1. install the letsencrypt client (https://letsencrypt.org/getting-started/). This will install the `certbot-auto` program used to generate the certificate. 
-
-  2. generate the SSL certificate
-
-    ```
-    ./certbot-auto certonly --standalone -d codeflower.la
-    ```
-    
-    This will create four files somewhere on the machine. The path to those files should be the same as the path in `appConfig.certDir`.
-
-  3. set up autorenewal using cron
-
-  Use `crontab -e` to open the crontab file. Then add this line to run the renewal twice a day at a randomly selected minute of 47, per letsencrypt's request. This will only replace the certificate when it's actually close to expiring. It stops the webserver before the replacement, and restarts it afterwards. See https://certbot.eff.org/docs/using.html#renewal. 
-
-  ```
-  47 6,15 * * * [PATH TO certbot-auto]/certbot-auto renew --pre-hook "forever stopall" --post-hook "npm run forever --prefix [PATH TO CodeFlower]"
-  ```
-
-7. `npm install`
-
-8. `npm run deploy`
-  - this will build a production version of the app and start node forever
-
-
+Note that the files are ultimately served through a Cloudfront distribution
+in front of the s3 bucket. That distro serves the letsencrypt SSL
+certificate, which needs to be rotated every 90 days. The certificate itself
+is in the Certificate Manager, N. Virginia region. Rotating the cert involves
+creating a new cert in the Certificate Manager, and then updating the 
+Cloudfront distro to point to the new cert.

@@ -38,6 +38,10 @@ module.exports = {
     tableName: 'repoTable'
   },
 
-  maxNodes: 1000
+  maxNodes: 1000,
+
+  s3: {
+    bucket: 'codeflower-client-web'
+  }
 
 };
