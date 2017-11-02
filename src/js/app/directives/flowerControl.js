@@ -38,13 +38,22 @@ angular.module('CodeFlower')
     scope.maxNodes = MAX_NODES;
     scope.multipleRepos = FEATURES.multipleRepos;
 
+    //// SCOPE FUNCTIONS ////
+
+    scope.githubUrl = function(repo) {
+      return FEATURES.multipleRepos && repo ?
+             'https://github.com/' + repo.fullName +
+             (repo.branch ? '/tree/' + repo.branch : '') :
+             '';
+    }
+
     //// EVENT EMITTERS ////
 
     scope.doClone = function(gitUrl) {
       var repo = extractRepoFromGitUrl(gitUrl);
       if (repo) {
         scope.$emit('doClone', {
-          repo: repo, 
+          repo: repo,
           gitUrl: gitUrl
         });
       } else {

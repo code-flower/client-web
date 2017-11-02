@@ -1,57 +1,59 @@
-<div 
-  class="flower-control" 
+<div
+  class="flower-control"
   ng-class="{'single-repo': !multipleRepos}">
 
-  <div ng-if="!multipleRepos" class="repo-and-branch">
+  <a class="repo-and-branch"
+     ng-href="{{githubUrl(state.currentRepo)}}"
+     target="_blank">
     <span class="repo-name">{{state.currentRepo.fullName}}</span>
     <br/>
     <span>({{state.currentRepo.branch}})</span>
-  </div>
-  
+  </a>
+
   <table>
-    <tr 
+    <tr
       ng-if="multipleRepos">
-      <td><label>add new repo</label></td>
+      <td><label>add repo</label></td>
       <td>
-        <input 
-          type="text" 
-          class="url-input form-control" 
-          ng-model="gitUrl" 
+        <input
+          type="text"
+          class="url-input form-control"
+          ng-model="gitUrl"
           placeholder="Enter a git clone url" />
       </td>
       <td>
-        <button 
+        <button
           ng-show="!state.cloning"
-          class="btn btn-primary clone-button" 
+          class="btn btn-primary clone-button"
           ng-click="doClone(gitUrl)"
           ng-disabled="!gitUrl">
           git clone
         </button>
-        <button 
+        <button
           ng-show="state.cloning"
-          class="btn btn-danger clone-button" 
+          class="btn btn-danger clone-button"
           ng-click="abortClone()">
           abort
         </button>
       </td>
     </tr>
-    <tr 
+    <tr
       ng-if="multipleRepos"
       ng-show="state.repoNames.length">
-      <td><label>current repo</label></td>
+      <td><label>cur. repo</label></td>
       <td>
-        <select 
+        <select
           ng-model="selectedRepo"
           ng-change="switchRepo(selectedRepo)"
           class="dropdown">
-          <option 
-            ng-repeat="name in state.repoNames" 
+          <option
+            ng-repeat="name in state.repoNames"
             value="{{name}}"
             ng-bind="name" />
         </select>
       </td>
       <td>
-        <button 
+        <button
           class="btn btn-primary delete-button"
           ng-click="deleteRepo(selectedRepo)"
           ng-disabled="cloning">
@@ -59,33 +61,33 @@
         </button>
       </td>
     </tr>
-    <tr 
+    <tr
       ng-show="state.repoNames.length">
       <td><label>folder</label></td>
       <td colspan="2">
-        <select 
-          ng-model="selectedFolder" 
-          ng-change="switchFolder(selectedFolder)" 
+        <select
+          ng-model="selectedFolder"
+          ng-change="switchFolder(selectedFolder)"
           class="dropdown two-col">
-          <option 
-            ng-repeat="path in state.folderPaths" 
+          <option
+            ng-repeat="path in state.folderPaths"
             value="{{path.pathName}}">
             {{path.pathName}} {{path.totalNodes > maxNodes ? '(' + path.totalNodes + ' nodes)' : ''}}
           </option>
         </select>
       </td>
     </tr>
-    <tr 
+    <tr
       ng-show="state.repoNames.length">
       <td><label>scheme</label></td>
       <td colspan="2">
-        <select 
-          ng-model="selectedColorScheme" 
-          ng-change="switchColorScheme(selectedColorScheme)" 
+        <select
+          ng-model="selectedColorScheme"
+          ng-change="switchColorScheme(selectedColorScheme)"
           class="dropdown two-col">
-          <option 
-            ng-repeat="colorScheme in colorSchemes" 
-            value="{{colorScheme}}" 
+          <option
+            ng-repeat="colorScheme in colorSchemes"
+            value="{{colorScheme}}"
             ng-bind="colorScheme" />
         </select>
       </td>
