@@ -236,7 +236,8 @@ gulp.task('browser-sync', function() {
       weinre: {
         port: 3200
       }
-    }
+    },
+    browser: argv.firefox ? 'firefox' : 'google chrome'
   });
 });
 
