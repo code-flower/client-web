@@ -1,14 +1,17 @@
 .app-container.periwinkle {
-  //@include backgroundColor(#fff);
-  
+
   .background {
     @include graphBackground;
-    //opacity: 0.5;
   }
 
   .flower-languages,
   .flower-control {
     background-color: transparentize(#fff, 0.5);
+  }
+
+  /* text in flower control */
+  .flower-control .repo-and-branch {
+    color: #3e3e3e;
   }
 
   .flower-languages table tr.highlight {

@@ -36,9 +36,9 @@
       display: none;
     }
   }
-  .flower-control.single-repo {
-    .repo-and-branch {
-      color: white;
-    }
+
+  /* text in flower control */
+  .flower-control .repo-and-branch {
+    color: white;
   }
 }
