@@ -16,23 +16,23 @@ angular.module('CodeFlower')
 
     //// PRIVATE VARIABLES ////
 
-    var currentCodeFlower; 
+    var currentCodeFlower;
 
     //// PRIVATE FUNCTIONS ////
 
     // Recursively count all elements in a tree
     function countElements(node) {
       var nbElements = 1;
-      if (node.children) 
-        nbElements += node.children.reduce(function(prev, cur) { 
-          return prev + countElements(cur); 
+      if (node.children)
+        nbElements += node.children.reduce(function(prev, cur) {
+          return prev + countElements(cur);
         }, 0);
       return nbElements;
     }
 
     function createCodeFlower(json) {
       // remove previous flower
-      if (currentCodeFlower) 
+      if (currentCodeFlower)
         currentCodeFlower.cleanup();
 
       if (!json)
@@ -43,12 +43,12 @@ angular.module('CodeFlower')
       var total = countElements(json);
       var h = Math.max(parseInt(Math.sqrt(total) * 100, 10) + padding, window.innerHeight - 12);
       var w = h;
-      
+
       // center the flower
       var viz = document.getElementById('visualization');
       viz.style.height = h + 'px';
       viz.style.width = w + 'px';
-      flowerUtils.centerViz();
+      setTimeout(flowerUtils.centerViz);
 
       // create the flower
       currentCodeFlower = new CodeFlower('#visualization', w, h).update(json);
@@ -59,22 +59,22 @@ angular.module('CodeFlower')
     scope.$watch(function () {
       return state.currentFolder.data;
     }, function (newVal, oldVal) {
-      if (newVal !== oldVal) { 
+      if (newVal !== oldVal) {
         var json = angular.copy(newVal);  // copy because the viz modifies the object
         flowerUtils.applyLanguageColorsToJson(json, state.languages);
 
         if (state.initialLoad) {
           $timeout(function() {
-            createCodeFlower(json);  
+            createCodeFlower(json);
             scope.$emit('flowerLoaded');
           }, 500);
         } else {
-          createCodeFlower(json); 
+          createCodeFlower(json);
         }
 
       }
     });
-    
+
   }
 
 });
