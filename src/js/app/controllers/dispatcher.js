@@ -114,6 +114,11 @@ angular.module('CodeFlower')
   }
 
   function setRepo(repoName) {
+    if (!repoName) {
+      state.currentRepo = null;
+      return false;
+    }
+
     dataService.harvest(repoName)
     .then(function(repoData) {
       buildUI(repoData);
@@ -157,13 +162,15 @@ angular.module('CodeFlower')
     .then(function() {
       if (state.repoNames.length)
         setRepo(state.repoNames[index] || state.repoNames[0]);
+      else
+        setRepo(null)
     });
   }
 
   function removeLoader() {
     var mask = document.getElementsByClassName('loading-mask')[0];
     mask.parentNode.removeChild(mask);
-  } 
+  }
 
   //// EVENT LISTENERS ////
 

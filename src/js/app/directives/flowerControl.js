@@ -30,8 +30,10 @@ angular.module('CodeFlower')
     //// SCOPE VARIABLES ////
 
     scope.state = state;
-    scope.gitUrl = '';
-    scope.selectedRepo = '';
+    scope.input = {
+      gitUrl: '',
+      selectedRepo: ''
+    };
     scope.selectedFolder = {};
     scope.selectedColorScheme = '';
     scope.colorSchemes = Object.keys(colorSchemes);
@@ -58,7 +60,7 @@ angular.module('CodeFlower')
         });
       } else {
         console.log('Not a valid git clone url. Need a modal for this.')
-        scope.gitUrl = '';
+        scope.input.gitUrl = '';
       }
     };
 
@@ -91,11 +93,11 @@ angular.module('CodeFlower')
     //// WATCHERS ////
 
     scope.$watch('state.gitUrl', function(newVal, oldVal) {
-      scope.gitUrl = newVal;
+      scope.input.gitUrl = newVal;
     });
 
     scope.$watch('state.currentRepo.fullName', function(newVal, oldVal) {
-      scope.selectedRepo = newVal;
+      scope.input.selectedRepo = newVal;
     });
 
     scope.$watch('state.currentFolder.path', function(newVal, oldVal) {

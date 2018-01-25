@@ -4,7 +4,8 @@
 
   <a class="repo-and-branch"
      ng-href="{{githubUrl(state.currentRepo)}}"
-     target="_blank">
+     target="_blank"
+     ng-if="state.currentRepo">
     <span class="repo-name">{{state.currentRepo.fullName}}</span>
     <br/>
     <span>({{state.currentRepo.branch}})</span>
@@ -18,15 +19,15 @@
         <input
           type="text"
           class="url-input form-control"
-          ng-model="gitUrl"
+          ng-model="input.gitUrl"
           placeholder="Enter a git clone url" />
       </td>
       <td>
         <button
           ng-show="!state.cloning"
           class="btn btn-primary clone-button"
-          ng-click="doClone(gitUrl)"
-          ng-disabled="!gitUrl">
+          ng-click="doClone(input.gitUrl)"
+          ng-disabled="!input.gitUrl">
           git clone
         </button>
         <button
@@ -43,8 +44,8 @@
       <td><label>cur. repo</label></td>
       <td>
         <select
-          ng-model="selectedRepo"
-          ng-change="switchRepo(selectedRepo)"
+          ng-model="input.selectedRepo"
+          ng-change="switchRepo(input.selectedRepo)"
           class="dropdown">
           <option
             ng-repeat="name in state.repoNames"
@@ -55,7 +56,7 @@
       <td>
         <button
           class="btn btn-primary delete-button"
-          ng-click="deleteRepo(selectedRepo)"
+          ng-click="deleteRepo(input.selectedRepo)"
           ng-disabled="cloning">
           delete
         </button>
