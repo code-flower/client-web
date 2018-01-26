@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('CodeFlower')
-.controller('dispatcher', function(PARTIALS_DIR, MAX_NODES, $scope, $timeout, $uibModal, $q,
+.controller('dispatcher', function(PARTIALS_DIR, MAX_NODES, FEATURES, $scope, $timeout, $uibModal, $q,
                                    $location, state, dataService, flowerUtils) {
 
   //// MODAL FUNCTIONS ////
@@ -170,6 +170,7 @@ angular.module('CodeFlower')
   function removeLoader() {
     var mask = document.getElementsByClassName('loading-mask')[0];
     mask.parentNode.removeChild(mask);
+    return $q.resolve();
   }
 
   //// EVENT LISTENERS ////
@@ -237,18 +238,28 @@ angular.module('CodeFlower')
 
   //// STATE INITIALIZATION ////
 
-  dataService.init()
-  .then(dataService.enumerate)
-  .then(function(repoNames) {
-    removeLoader();
-    state.repoNames = repoNames;
+  if (FEATURES.multipleRepos) {
 
-    var params = $location.search();
-    if (params.owner && params.name)
-      doClone({ repo: params });
-    else if (repoNames[0])
-      setRepo(repoNames[0]);
-  });
+    dataService.init()
+      .then(removeLoader)
+      .then(dataService.enumerate)
+      .then(function(repoNames) {
+        state.repoNames = repoNames;
+        setRepo(repoNames[0]);
+      });
+
+  } else {
+
+    dataService.init()
+      .then(removeLoader)
+      .then(dataService.deleteAll)
+      .then(function() {
+        var params = $location.search();
+        if (params.owner && params.name)
+          doClone({ repo: params });
+      });
+
+  }
 
   document.body.onresize = flowerUtils.centerViz;
 

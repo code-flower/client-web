@@ -2,11 +2,11 @@
 'use strict';
 
 angular.module('CodeFlower')
-.factory('dataService', function(dbAccess, WS, API, $rootScope) {
+.factory('dataService', function(dbAccess, WS, API, $rootScope, $q) {
 
   //// PRIVATE ////
 
-  // an array of callbacks to call when 
+  // an array of callbacks to call when
   // progress is made on the clone
   var subscribers = [];
 
@@ -71,7 +71,7 @@ angular.module('CodeFlower')
     },
 
     getIgnored: function(repoName) {
-      return dbAccess.get(repoName) 
+      return dbAccess.get(repoName)
         .then(function(data) {
           return data.cloc.ignored;
         });
@@ -79,6 +79,15 @@ angular.module('CodeFlower')
 
     delete: function(repoName) {
       return dbAccess.delete(repoName);
+    },
+
+    deleteAll: function() {
+      return dbAccess.getKeys()
+        .then(function(keys) {
+          return $q.all(keys.map(function(key) {
+            return dbAccess.delete(key);
+          }))
+        })
     },
 
     subscribe: function(callback) {
