@@ -249,12 +249,9 @@ gulp.task('build', function(cb) {
 });
 
 gulp.task('deploy', function(cb) {
-  runSequence('build', 'cacheBust', 'upload', cb);
+  runSequence('build', 'cacheBust', cb);
 });
 
 gulp.task('default', function(cb) {
   runSequence('build', ['watch:js', 'watch:sass', 'watch:partials', 'watch:index'], 'browser-sync', cb);
 });
-
-
-

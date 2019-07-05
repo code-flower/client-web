@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "CodeFlower web client",
   "main": "src/index.html",
-  "scripts": {},
+  "scripts": {
+    "deploy": "gulp deploy --env production && firebase deploy"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/code-flower/client-web"
@@ -34,7 +36,7 @@
     "gulp-open": "^1.0.0",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.6.1",
-    "gulp-sass": "^2.2.0",
+    "gulp-sass": "^4.0.2",
     "gulp-uglify": "^1.5.3",
     "gulp-util": "^3.0.7",
     "gulp-zip": "^3.2.0",
