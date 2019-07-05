@@ -21,19 +21,13 @@ will cause assets to be minified.
 
 #### Deploying to Production
 
-`gulp deploy --env production`
+`npm run deploy`
 
 This will build the production version of the app (w/ minified assets),
 timestamp the js and css files for cache-busting purposes, and upload
-the dist/ folder to the s3 bucket specified in the config.
+the dist/ folder to firebase hosting.
 
 You can check that the deploy succeeded by opening a browser to
 web.codeflower.la, opening the Elements tab of the Chrome inspector,
 and comparing the timestamps on the js and css files to the timestamp
-in the output form the `gulp deploy` command.
-
-Note that the files are ultimately served through a Cloudfront distribution
-in front of the s3 bucket. That distro serves the letsencrypt SSL
-certificate, which needs to be rotated every 90 days. The certificate itself
-is in the Certificate Manager, N. Virginia region. The cert is rotated
-automatically by a cron script running on the admin server.
+in the output from the deploy command.

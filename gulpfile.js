@@ -22,11 +22,9 @@ const gulp          = require('gulp'),
       bulkify       = require('bulkify'),
       es            = require('event-stream'),
       rename        = require('gulp-rename'),
-      replace       = require('gulp-replace'),
-      s3            = require('s3');
+      replace       = require('gulp-replace');
 
 const config = require('./config');
-const awsCreds = require('./private/aws-creds');
 
 ///////////////// CONSTANTS //////////////////
 
@@ -164,48 +162,6 @@ gulp.task('cacheBust', function() {
   replaceStream.pipe(gulp.dest(DIST));
 
   return es.merge(renameStreams.concat(replaceStream));
-});
-
-///////////////////// UPLOAD TO S3 ////////////////////////
-
-gulp.task('upload', function(cb) {
-
-  let client = s3.createClient({
-    s3Options: awsCreds
-  });
-
-  let uploader = client.uploadDir({
-    localDir: DIST,
-    deleteRemoved: true,
-    s3Params: {
-      Bucket: config.s3.bucket
-    },
-    getS3Params: function(localFile, stat, callback) {
-      let s3Params = stat.path === 'index.html' ?
-                     { CacheControl: 'max-age=0' } :
-                     { CacheControl: 'max-age=604800' }
-      callback(null, s3Params);
-    }
-  });
-
-  uploader.on('error', function(err) {
-    console.error("unable to sync:", err.stack);
-    process.exit(1);
-  });
-
-  let lastProgress = 0, curProgress;
-  uploader.on('progress', function() {
-    curProgress = 100 * uploader.progressAmount / uploader.progressTotal;
-    if (curProgress - lastProgress > 3) {
-      gutil.log("upload progress: " + Math.round(curProgress) + "%");
-      lastProgress = curProgress;
-    }
-  });
-
-  uploader.on('end', function() {
-    gutil.log("done uploading");
-    cb();
-  });
 });
 
 ////////////////// DEV TASKS //////////////////
