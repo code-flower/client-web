@@ -1,6 +1,8 @@
 .ignored-files {
   height: 100%;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   .label-with-select {
     margin-bottom: 8px;
     select {
@@ -8,7 +10,6 @@
     }
   }
   .ignored-text {
-    height: calc(100% - 50px);
     overflow: auto;
     word-wrap: break-word;
   }
